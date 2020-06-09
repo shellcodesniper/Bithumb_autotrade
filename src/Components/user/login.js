@@ -6,12 +6,12 @@ import {
   Input,
   Form
 } from 'semantic-ui-react'
+import { Redirect } from "react-router-dom";
 
 import 'stylesheets/login.css'
 const { ipcRenderer } = window;
 
 function LoginForm (props) {
-  console.log(props);
 
   return (
       <Container className="marginTop">
@@ -48,7 +48,8 @@ class Login extends React.Component {
     super(props);
     this.state = {
       connectKey:'',
-      secretKey:''
+      secretKey:'',
+      redirect: ''
     }
 
     this.restoreValue = this.restoreValue.bind(this);
@@ -59,8 +60,14 @@ class Login extends React.Component {
   }
 
   componentDidMount() {
-    console.log("MOUNT")
     this.restoreValue();
+    ipcRenderer.on("response_account", (event, data) => {
+      this.setState(
+          { redirect: '/info' }
+        )
+    });
+
+
   }
 
   restoreValue(event) {
@@ -72,11 +79,9 @@ class Login extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-
-    console.log(this.state);
     if(!(!this.state.connectKey)) localStorage.setItem("connectKey", this.state.connectKey);
     if(!(!this.state.secretKey)) localStorage.setItem("secretKey", this.state.secretKey);
-    ipcRenderer.send("test", this.state);
+    ipcRenderer.send("request_account", this.state);
   }
 
   handleFormChange(event) {
@@ -98,6 +103,10 @@ class Login extends React.Component {
   }
 
   render () {
+    if (this.state.redirect) {
+    return <Redirect to={this.state.redirect} />
+
+  }
     return (
       <Container>
         <LoginForm connectKey={this.state.connectKey} secretKey={this.state.secretKey} handleChange={this.handleFormChange} handleSubmit={this.handleSubmit}/>

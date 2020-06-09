@@ -8,9 +8,9 @@ const UserManager = {
     login_token: ''
   },
 
-  isLoggedIn: () => {
-    let userInfo = localStorage.getItem('userinfo');
-    return !(!userInfo) ? true : false;
+  isLoggedIn: (data) => {
+    if(!(!data.data.status) && data.data.status ==="0000") return true;
+    else return false;
   }
 
 }
