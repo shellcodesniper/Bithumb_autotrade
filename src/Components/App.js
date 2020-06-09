@@ -1,6 +1,7 @@
 import React from 'react';
 import 'stylesheets/App.css';
 import {Switcher} from './switcher';
+import Layout from './Layout';
 import {
   Container
 } from "semantic-ui-react";
@@ -21,7 +22,9 @@ class App extends React.Component {
   render() {
     // 로그인 여부 확인 후 Home / Login 페이지로 넘겨주기
     return (
-      <Switcher isloggedIn={UserManager.isLoggedIn()} />
+      <Layout>
+        <Switcher isloggedIn={UserManager.isLoggedIn()} />
+      </Layout>
     );
     
   }
