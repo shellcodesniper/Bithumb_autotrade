@@ -67,7 +67,7 @@ app.whenReady().then(createWindow)
 console.log(`The temp path is: ${app.getAppPath("temp")}`)
 
 /* Event handler for asynchronous incoming messages */
-// require('./src/ipcmain')
+require('./src/ipcmain')
 
 console.log("Load ipcMain Done.");
 // ipcMain 에 들어가는 소스들은 ./src/ipcmain.js 에 정의되어있음

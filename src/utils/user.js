@@ -1,3 +1,7 @@
+const {
+  ipcRenderer
+} = window;
+
 const UserManager = {
   userInfoStruct : {
     access_token: '',

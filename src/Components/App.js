@@ -1,6 +1,9 @@
 import React from 'react';
 import 'stylesheets/App.css';
 import {Switcher} from './switcher';
+import {
+  Container
+} from "semantic-ui-react";
 
 import {
   UserManager
