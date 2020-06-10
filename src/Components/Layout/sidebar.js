@@ -9,6 +9,13 @@ function Leftsidebar(props) {
   return (
     <Menu vertical>
       <Menu.Item
+        name="home"
+        active={props.activeItem === "home"}
+        onClick={props.handleItemClick}
+      >
+        HOME
+      </Menu.Item>
+      <Menu.Item
         name="info"
         active={props.activeItem === "info"}
         onClick={props.handleItemClick}
