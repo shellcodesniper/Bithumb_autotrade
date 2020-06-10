@@ -8,6 +8,8 @@ import {
 } from 'semantic-ui-react'
 import { Redirect } from "react-router-dom";
 
+import ApiUtil from "utils/api"
+
 import 'stylesheets/login.css'
 const { ipcRenderer } = window;
 
@@ -62,9 +64,14 @@ class Login extends React.Component {
   componentDidMount() {
     this.restoreValue();
     ipcRenderer.on("response_account", (event, data) => {
-      this.setState(
+      console.log(data);
+      if(!(!ApiUtil.decodeApiResponse(data))) {
+        this.setState(
           { redirect: '/info' }
         )
+        if (!(!this.state.connectKey)) localStorage.setItem("connectKey", this.state.connectKey);
+        if (!(!this.state.secretKey)) localStorage.setItem("secretKey", this.state.secretKey);
+      }
     });
 
 
@@ -79,9 +86,17 @@ class Login extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    if(!(!this.state.connectKey)) localStorage.setItem("connectKey", this.state.connectKey);
-    if(!(!this.state.secretKey)) localStorage.setItem("secretKey", this.state.secretKey);
-    ipcRenderer.send("request_account", this.state);
+    let requestData = {
+      apiData: {
+        connectKey:this.state.connectKey,
+        secretKey:this.state.secretKey
+      },
+      apiParams: {
+        order_currency: "BTC",
+        payment_currency: "KRW"
+      }
+    }
+    ipcRenderer.send("request_account", requestData);
   }
 
   handleFormChange(event) {

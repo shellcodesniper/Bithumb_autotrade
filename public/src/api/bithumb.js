@@ -3,23 +3,34 @@ const {
 } = require('electron')
 
 const XCoinAPI = require('../bithumb/requester');
+var xcoinAPI = null;
 
+async function requestxcoinAPI(requestUrl, apiData, rgParams) {
+  if (xcoinAPI == null) xcoinAPI = new XCoinAPI(apiData.connectKey, apiData.secretKey);
+  let result = await xcoinAPI.xcoinApiCall(requestUrl, rgParams);
+  return result;
+}
 
+function filterData(data) {
+  let apiData = !data.apiData ? {} : data.apiData;
+  let apiParams = !data.apiParams ? {} : data.apiParams;
+  return [apiData, apiParams];
+}
+// ! 필터 함수 validation 진행
 
 ipcMain.on("request_account", async (event, data) => {
-  console.log("### DEBUG REQUEST_ACCOUNT ###")
-  console.log(data);
-  let connectKey = data.connectKey;
-  let secretKey = data.secretKey;
+  let [apiData, apiParams] =filterData(data);
+  console.log(apiData,apiParams)
 
-  var xcoinAPI = new XCoinAPI(connectKey, secretKey);
-  var rgParams = {
-    order_currency: 'BTC',
-    payment_currency: 'KRW'
-  };
-
-  let result = await xcoinAPI.xcoinApiCall('/info/account', rgParams);
-
+  let result = await requestxcoinAPI("/info/account", apiData, apiParams);
   event.sender.send("response_account", result)
-  // event.sender.send("response_account"), 
 })
+
+
+ipcMain.on("request_orderbook" , async (event, data) => {
+  console.log(data);
+  let [apiData, apiParams] = filterData(data);
+  let result = await requestxcoinAPI(`/public/orderbook/${apiParams.order_currency}_${apiParams.payment_currency}`, apiData, apiParams);
+  event.sender.send("response_orderbook", result)
+
+});

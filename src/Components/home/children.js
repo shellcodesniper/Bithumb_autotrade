@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import {
   Container,
   Divider,
@@ -7,11 +7,31 @@ import {
   Table
 } from "semantic-ui-react";
 
+import ApiUtil from "utils/api"
+
 const {
   ipcRenderer
 } = window;
 
+function priceBox(props) {
+  return(
+    <divp>A</divp>
+  )
+}
+
 function CurrentPrice(props) {
+  const [currentPriceList, setCurrentPriceList] = useState('');
+  
+  useEffect(() => {
+    ipcRenderer.on("response_orderbook", (event, data) => {
+      console.log(data);
+    })
+    ipcRenderer.send("request_orderbook", ApiUtil.prepareApiData({
+      order_currency: 'ALL',
+      payment_currency: 'KRW'
+    }));
+  }, []);
+
   return(
     <div>
       <Divider horizontal>
@@ -20,7 +40,6 @@ function CurrentPrice(props) {
           현재가격
         </Header>
       </Divider>
-        <p>content</p>
     </div>
   );
 }

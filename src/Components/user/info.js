@@ -8,7 +8,7 @@ import {
   Table
 } from "semantic-ui-react";
 
-
+import ApiUtil from "utils/api"
 const { ipcRenderer } = window;
 
 function Description (props) {
@@ -65,9 +65,10 @@ class Info extends React.Component {
   constructor(props) {
     super(props);
 
+    var {connectKey, secretKey} = ApiUtil.getApiData();
     this.state = {
-      connectKey: !localStorage.getItem("connectKey") ? "" : localStorage.getItem("connectKey"),
-      secretKey: !localStorage.getItem("secretKey") ? "" : localStorage.getItem("secretKey"),
+      connectKey: connectKey,
+      secretKey: secretKey,
       userInfo: {
         created: "",
         account_id: "",
@@ -80,6 +81,7 @@ class Info extends React.Component {
 
   }
   componentDidMount() {
+    console.log("### DEBUG IN INFO ###")
     ipcRenderer.on("response_account", (event, data) => {
       if(!(!data) && data !== "ERROR") {
         let result = data.data;
@@ -97,11 +99,16 @@ class Info extends React.Component {
           }
         })
       } else {
-        ipcRenderer.send("request_account", this.state);
-        // 재요청
+        ipcRenderer.send("request_account", ApiUtil.prepareApiData({
+          order_currency: 'BTC',
+          payment_currency: 'KRW'
+        }));
       }
     });
-    ipcRenderer.send("request_account", this.state);
+    ipcRenderer.send("request_account", ApiUtil.prepareApiData({
+      order_currency: 'BTC',
+      payment_currency: 'KRW'
+    }));
   }
   render () {
     return (

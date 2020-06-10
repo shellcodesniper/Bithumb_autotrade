@@ -10,23 +10,29 @@ import { Redirect } from "react-router-dom";
 import Layout from 'components/Layout/Layout';
 
 import { Content } from "./children"
+import ApiUtil from "utils/api"
 
 const { ipcRenderer } = window;
 
 class Home extends React.Component {
   render() {
-    if(!(!localStorage.getItem("connectKey")) || !(!localStorage.getItem("secretKey"))) {
+    var {
+      connectKey,
+      secretKey
+    } = ApiUtil.getApiData();
+    if(!connectKey || !secretKey) {
+      console.log("NOT LOGGED IN!!!")
+      return (<Redirect to={"/login"} />)
+    }
+    else {
       console.log("MAIN")
       return (
         <Layout currentName="home">
         <Container>
-          <Content responseData={this.state}/>
+          <Content/>
         </Container>
         </Layout>
       )
-    }
-    else {
-      return (<Redirect to={"/login"} />)
     }
   }
 }
