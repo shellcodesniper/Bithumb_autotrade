@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react'
 import {
+  Accordion,
   Container,
+  Card,
   Divider,
   Header,
   Icon,
@@ -9,22 +11,59 @@ import {
 
 import ApiUtil from "utils/api"
 
+import "stylesheets/home.css"
+
 const {
   ipcRenderer
 } = window;
 
-function priceBox(props) {
+function PriceBox(props) {
+  const name = props.item.name;
+  const priceString = props.item.data.bids[0].price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
   return(
-    <divp>A</divp>
+    <Card fluid className="priceBox" color='red' header={`${name}    ||    ${priceString} WON`} />
+  )
+  
+}
+
+function PriceBoxList(props) {
+  console.log("PRICEBOX")
+  var dict = props.resultList;
+  var elements = [];
+  for (var key in dict) {
+    if (!(["timestamp", "payment_currency"].includes(key))){
+      elements.push(
+        {
+          name: key,
+          data: dict[key]
+        }
+      )
+    }
+  }
+  return(
+    <div>
+      <Container>
+        {elements.map(
+          (item) => {
+            return (<PriceBox key={item.name} item={item}/>)
+          }
+        )}
+      </Container>
+    </div>
   )
 }
 
 function CurrentPrice(props) {
-  const [currentPriceList, setCurrentPriceList] = useState('');
+  const [resultList, setresultList] = useState('');
+  const [activeAccodion, setactiveAccodion] = useState(false);
   
   useEffect(() => {
     ipcRenderer.on("response_orderbook", (event, data) => {
-      console.log(data);
+      let result = ApiUtil.decodeApiResponse(data)
+      if(!(!result)) {
+        setresultList(result);
+      }
     })
     ipcRenderer.send("request_orderbook", ApiUtil.prepareApiData({
       order_currency: 'ALL',
@@ -32,14 +71,34 @@ function CurrentPrice(props) {
     }));
   }, []);
 
+  function handleClick(e) {
+    setactiveAccodion(!activeAccodion);
+  }
+
   return(
     <div>
-      <Divider horizontal>
-        <Header as='h4'>
-          <Icon name='money' />
-          현재가격
-        </Header>
-      </Divider>
+      <Accordion>
+        <Accordion.Title
+          active = {
+            activeAccodion
+          }
+          index={0}
+          onClick={handleClick}
+        >
+          <Divider horizontal>
+            <Header as='h4'>
+              <Icon name='money' />
+              현재가격 [눌러서 확인]
+            </Header>
+          </Divider>
+        </Accordion.Title>
+        <Accordion.Content active={activeAccodion}>
+          <Card.Group>
+          <PriceBoxList resultList={resultList}/>
+        </Card.Group> 
+        <div className="seperator" />
+        </Accordion.Content>
+      </Accordion>
     </div>
   );
 }

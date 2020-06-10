@@ -85,9 +85,7 @@ class Info extends React.Component {
     ipcRenderer.on("response_account", (event, data) => {
       if(!(!data) && data !== "ERROR") {
         let result = data.data;
-        var timestamp = parseInt(result.created);
-        var d = new Date(timestamp);
-        var createdString = `${d.getFullYear()}-${d.getMonth()}-${d.getDay()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`
+        var createdString = ApiUtil.getFullStringFromTimeStamp(result.created)
         this.setState({
           userInfo: {
             created: createdString,

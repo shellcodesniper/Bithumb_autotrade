@@ -34,6 +34,15 @@ const ApiUtil ={
       }
       return data.data
     }
+  },
+  getDateFromTimeStamp: function (epoch) {
+    var timestamp = parseInt(epoch);
+    var d = new Date(timestamp);
+    return d;
+  },
+  getFullStringFromTimeStamp: function (epoch) {
+    var d = this.getDateFromTimeStamp(epoch);
+    return `${d.getFullYear()}-${d.getMonth()}-${d.getDay()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`
   }
 }
 

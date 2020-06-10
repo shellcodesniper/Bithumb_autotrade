@@ -43,7 +43,7 @@ class Layout extends React.Component {
     return (
       <div>
         <Menubar />
-        <SplitPane split="vertical" minSize={100} defaultSize={212}>
+        <SplitPane split="vertical" className="makeScrollable" minSize={100} defaultSize={212}>
           <div className="dividerLeft">
             <Leftsidebar
               activeItem={this.state.activeItem}
