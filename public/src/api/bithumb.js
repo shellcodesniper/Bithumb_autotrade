@@ -34,3 +34,11 @@ ipcMain.on("request_orderbook" , async (event, data) => {
   event.sender.send("response_orderbook", result)
 
 });
+
+ipcMain.on("request_ticker", async (event, data) => {
+  console.log(data);
+  let [apiData, apiParams] = filterData(data);
+  let result = await requestxcoinAPI(`/public/ticker/${apiParams.order_currency}_${apiParams.payment_currency}`, apiData, apiParams);
+  event.sender.send("response_ticker", result)
+
+});

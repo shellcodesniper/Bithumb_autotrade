@@ -1,6 +1,11 @@
-import React, {useState, useEffect} from 'react'
+import React, {
+  useState,
+  useEffect,
+  useRef
+} from 'react'
 import {
   Accordion,
+  Statistic,
   Container,
   Card,
   Divider,
@@ -19,16 +24,15 @@ const {
 
 function PriceBox(props) {
   const name = props.item.name;
-  const priceString = props.item.data.bids[0].price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const priceString = ApiUtil.comma3Seperator(props.item.data.bids[0].price);
 
   return(
-    <Card fluid className="priceBox" color='red' header={`${name}    ||    ${priceString} WON`} />
+    <Card fluid className="priceBox" color='green' header={`${name}    ||    ${priceString} WON`} />
   )
   
 }
 
 function PriceBoxList(props) {
-  console.log("PRICEBOX")
   var dict = props.resultList;
   var elements = [];
   for (var key in dict) {
@@ -65,10 +69,7 @@ function CurrentPrice(props) {
         setresultList(result);
       }
     })
-    ipcRenderer.send("request_orderbook", ApiUtil.prepareApiData({
-      order_currency: 'ALL',
-      payment_currency: 'KRW'
-    }));
+    updateOrderbook();
   }, []);
 
   function handleClick(e) {
@@ -103,19 +104,122 @@ function CurrentPrice(props) {
   );
 }
 
+
+class HotCoinBox extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      realtimeDiff: 0,
+      name: props.item.name,
+      curPrice: props.item.data.closing_price,
+      diffRate: props.item.data.fluctate_rate_24H
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if(this.props.item.data.closing_price !== prevProps.item.data.closing_price) {
+      this.setState({
+        realtimeDiff: ApiUtil.toFixedFloat(prevProps.item.data.closing_price - this.props.item.data.closing_price)
+      })
+    }
+  }
+  render() {
+    return (      
+    <div>
+      <div className="seperator" />
+      <Statistic.Group widths='four'>
+        <Statistic>
+          <Statistic.Value text>
+            {this.state.name}
+          </Statistic.Value>
+          <Statistic.Label>Coin Name</Statistic.Label>
+        </Statistic>
+        <Statistic>
+          <Statistic.Value>{this.state.curPrice}</Statistic.Value>
+          <Statistic.Label>현재가격</Statistic.Label>
+        </Statistic>
+
+        <Statistic>
+          <Statistic.Value>
+            < Icon color = {
+              this.state.realtimeDiff > 0 ? "blue" : this.state.realtimeDiff === 0 ? "green" : "red"
+            }
+            name = {
+              this.state.realtimeDiff > 0 ? "hand point up outline" : this.state.realtimeDiff === 0 ? "hand point right outline" : "hand point down outline"
+            }
+            />{ApiUtil.comma3Seperator(this.state.realtimeDiff)}
+          </Statistic.Value>
+          <Statistic.Label>실시간등락</Statistic.Label>
+        </Statistic>
+      </Statistic.Group>
+    </div>
+  )
+  }
+  
+
+  
+}
+function HotCoinBoxList(props) {
+  let resultList = props.resultList
+  if(!resultList) return (<div></div>)
+  return (
+    <div>
+      {resultList.map(
+        (item) => {
+          return (<HotCoinBox key={item.name} item={item}/>)
+        }
+      )} 
+    </div>
+  )
+}
+
 function HotCoin(props) {
+  const [resultList, setresultList] = useState('');
+
+  useEffect(() => {
+    ipcRenderer.on("response_ticker", (event, data) => {
+      let origin = ApiUtil.decodeApiResponse(data)
+      let result = [];
+      let waitsort = [];
+      for (var key in origin) {
+        waitsort.push([key, origin[key].acc_trade_value_24H])
+      }
+      // ! 제일 거래양이 많은 코인을 가져오기 위해 대기열에 추가
+
+      waitsort.sort(function (a, b) {
+        return b[1] - a[1];
+      });
+      // ! 정렬
+
+      for (let i=0;i<3;i++) {
+        result.push({
+          name: waitsort[i][0],
+          data: origin[waitsort[i][0]]
+        })
+      }
+      // ! 정렬된 데이터를 바탕으로 결과 배열에 추가
+
+      if (!(!result)) {
+        setresultList(result);
+      }
+    })
+    updateTicker();
+  }, []);
+
   return(
     <div>
       <Divider horizontal>
         <Header as='h4'>
           <Icon name='attention' />
-          HOT 자산
+            HOT 자산[거래금액 상위 3 가지]
         </Header>
       </Divider>
-        <p>content</p>
+        <HotCoinBoxList resultList={resultList}/>
     </div>
   )
 }
+
 function Detail(props) {
   return(
     <div>
@@ -142,8 +246,35 @@ function Detail(props) {
   )
 }
 
+function updateOrderbook(){
+  ipcRenderer.send("request_orderbook", ApiUtil.prepareApiData({
+    order_currency: 'ALL',
+    payment_currency: 'KRW'
+  }));
+}
+
+function updateTicker() {
+  ipcRenderer.send("request_ticker", ApiUtil.prepareApiData({
+    order_currency: 'ALL',
+    payment_currency: 'KRW'
+  }));
+}
+
 function Content (props) {
-  var data = props.responseData;
+  const [time, setTime] = useState(Date.now());
+  // ! 주기적으로 새로고침 하기위해
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(Date.now())
+      updateTicker();
+      updateOrderbook();
+    }, 2000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+  
   return (
     <div>
       <CurrentPrice />
