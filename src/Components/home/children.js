@@ -116,8 +116,8 @@ class HotCoinBox extends React.Component {
     this.state = {
       realtimeDiff: 0,
       name: props.item.name,
-      curPrice: props.item.data.closing_price,
-      diffRate24: props.item.data.fluctate_rate_24H
+      curPrice: ApiUtil.toFixedFloat(props.item.data.closing_price),
+      diffRate24: ApiUtil.toFixedFloat(props.item.data.fluctate_rate_24H, 2)
     }
   }
 
@@ -150,16 +150,16 @@ class HotCoinBox extends React.Component {
                 color={
                   this.state.realtimeDiff > 0
                     ? "blue"
-                    : this.state.realtimeDiff === 0
-                    ? "green"
-                    : "red"
+                    : this.state.realtimeDiff < 0
+                    ? "red"
+                    : "green"
                 }
                 name={
                   this.state.realtimeDiff > 0
                     ? "hand point up outline"
-                    : this.state.realtimeDiff === 0
-                    ? "hand point right outline"
-                    : "hand point down outline"
+                    : this.state.realtimeDiff < 0
+                    ? "hand point down outline"
+                    : "hand point right outline"
                 }
               />
               {ApiUtil.comma3Seperator(this.state.realtimeDiff)}
@@ -173,19 +173,19 @@ class HotCoinBox extends React.Component {
                 color={
                   this.state.diffRate24 > 0
                     ? "blue"
-                    : this.state.diffRate24 === 0
-                    ? "green"
-                    : "red"
+                    : this.state.diffRate24 < 0
+                    ? "red"
+                    : "green"
                 }
                 name={
                   this.state.diffRate24 > 0
                     ? "hand point up outline"
-                    : this.state.diffRate24 === 0
-                    ? "hand point right outline"
-                    : "hand point down outline"
+                    : this.state.diffRate24 < 0
+                    ? "hand point down outline"
+                    : "hand point right outline"
                 }
               />
-              {ApiUtil.comma3Seperator(this.state.diffRate24, 0)} %
+              {ApiUtil.toFixedFloat(this.state.diffRate24, 2)} %
             </Statistic.Value>
             <Statistic.Label>24시간 등락</Statistic.Label>
           </Statistic>
