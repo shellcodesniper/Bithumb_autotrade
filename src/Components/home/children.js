@@ -27,7 +27,7 @@ function PriceBox(props) {
   const priceString = ApiUtil.comma3Seperator(props.item.data.bids[0].price);
 
   return(
-    <Card fluid className="priceBox" color='green' header={`${name}    ||    ${priceString} WON`} />
+    <Card fluid className="priceBox" color={Math.floor(Math.random() * 3) > 1 ? "blue":"orange"} header={`${name}    ||    ${priceString} WON`} />
   )
   
 }
@@ -89,15 +89,18 @@ function CurrentPrice(props) {
           <Divider horizontal>
             <Header as='h4'>
               <Icon name='money' />
-              현재가격 [눌러서 확인]
+              {
+                activeAccodion ? "현재가격 [눌러서 접기]" : "현재가격 [눌러서 펼치기]"
+              }
             </Header>
           </Divider>
         </Accordion.Title>
         <Accordion.Content active={activeAccodion}>
           <Card.Group>
-          <PriceBoxList resultList={resultList}/>
-        </Card.Group> 
-        <div className="seperator" />
+          
+            <PriceBoxList resultList={resultList}/>
+          </Card.Group> 
+          <div className="seperator" />
         </Accordion.Content>
       </Accordion>
     </div>
@@ -113,7 +116,7 @@ class HotCoinBox extends React.Component {
       realtimeDiff: 0,
       name: props.item.name,
       curPrice: props.item.data.closing_price,
-      diffRate: props.item.data.fluctate_rate_24H
+      diffRate24: props.item.data.fluctate_rate_24H
     }
   }
 
@@ -151,6 +154,19 @@ class HotCoinBox extends React.Component {
             />{ApiUtil.comma3Seperator(this.state.realtimeDiff)}
           </Statistic.Value>
           <Statistic.Label>실시간등락</Statistic.Label>
+        </Statistic>
+
+        <Statistic>
+          <Statistic.Value>
+            < Icon color = {
+              this.state.diffRate24 > 0 ? "blue" : this.state.diffRate24 === 0 ? "green" : "red"
+            }
+            name = {
+              this.state.diffRate24 > 0 ? "hand point up outline" : this.state.diffRate24 === 0 ? "hand point right outline" : "hand point down outline"
+            }
+            />{ApiUtil.comma3Seperator(this.state.diffRate24,0)} %
+          </Statistic.Value>
+          <Statistic.Label>24시간 등락</Statistic.Label>
         </Statistic>
       </Statistic.Group>
     </div>
@@ -192,7 +208,7 @@ function HotCoin(props) {
       });
       // ! 정렬
 
-      for (let i=0;i<3;i++) {
+      for (let i=0;i<10;i++) {
         result.push({
           name: waitsort[i][0],
           data: origin[waitsort[i][0]]
@@ -212,7 +228,7 @@ function HotCoin(props) {
       <Divider horizontal>
         <Header as='h4'>
           <Icon name='attention' />
-            HOT 자산[거래금액 상위 3 가지]
+            HOT 자산[거래금액 상위 10 가지]
         </Header>
       </Divider>
         <HotCoinBoxList resultList={resultList}/>
@@ -279,8 +295,9 @@ function Content (props) {
     <div>
       <CurrentPrice />
       <HotCoin/>
-      <Detail/>
     </div>
   )
+  // <Detail/>
+  // ! 현재 삭제됨
 }
 export {Content}

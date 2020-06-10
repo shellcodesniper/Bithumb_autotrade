@@ -3,23 +3,27 @@ import {
   Menu
 } from "semantic-ui-react";
 
-function Menubar(props) {
-  let items = [
-   {
-     key: 'editorials',
-     active: true,
-     name: 'Editorials'
-   }, {
-     key: 'review',
-     name: 'Reviews'
-   }, {
-     key: 'events',
-     name: 'Upcoming Events'
-   },
-  ];
-  return (
-    <Menu items={items} />
+class Menubar extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      items: [{
+        key: 'contact',
+        active: true,
+        content: <b>기능 추가 / 문의 사항</b>
+      }, {
+        key: 'info',
+        active: false,
+        content: '개발 : shellcodesniper / KuuWangE'
+      }, ]
+    }
+  }
+
+  render () {
+    return (
+      <Menu items = {this.state.items}/>
     );
+  }
 }
 
 export {

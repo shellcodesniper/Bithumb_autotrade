@@ -50,9 +50,9 @@ const ApiUtil ={
   },
   // ! epoch timestamp 를 data 로 만든 후 날짜 형식으로 반환
 
-  comma3Seperator: function (price) {
+  comma3Seperator: function (price,fixed=3) {
     let ordinary = parseInt(price);
-    let floats = (parseFloat(price) - ordinary).toFixed(3);
+    let floats = this.toFixedFloat((parseFloat(price) - ordinary),1);
     let returnString = ordinary.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
     if(floats > 0) {
       returnString += `${floats.toString().slice(1)}`
@@ -61,8 +61,8 @@ const ApiUtil ={
   },
   // ! 숫자를 3자리씩 잘라서 , 붙여줌
 
-  toFixedFloat: function(price) {
-    return parseFloat(price).toFixed(3);
+  toFixedFloat: function(price,fixed=3) {
+    return parseFloat(price).toFixed(fixed);
   }
 }
 

@@ -27,6 +27,9 @@ html, body {
   overflow: auto;
 }
 
+.SplitPane {
+  height: 93% !important;
+}
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
