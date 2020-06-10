@@ -4,8 +4,13 @@ const {
   dialog,
   ipcMain
 } = require("electron");
+const {
+  autoUpdater
+} = require("electron-updater");
 const isDev = require("electron-is-dev");
 const path = require('path')
+
+require("electron-debug")();
 const electronInstaller = require('electron-winstaller');
 
 require("electron-debug")();
@@ -42,13 +47,15 @@ function createWindow() {
     // ! 개발모드가 아닐경우 메뉴를 지워버림
   }
 
+
+
   mainWindow.on('closed', () => {
     app.quit();
   });
 
 }
 
-
+require("./autoupdater")(mainWindow);
 
 
 

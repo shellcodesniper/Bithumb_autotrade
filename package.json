@@ -1,13 +1,13 @@
 {
   "type": "module",
   "name": "hit_the_bot",
-  "version": "0.0.2",
+  "version": "0.1.4",
   "productName": "Hit The Bot",
   "description": "자동거래",
   "copyright": "Coded By. shellcodesniper@gmail.com / 김도균 / shellcodesniper",
   "repository": {
     "type": "git",
-    "url": "깃주소 https://github.com/shellcodesniper/Bithumb_autotrade.git"
+    "url": "https://github.com/shellcodesniper/Bithumb_autotrade.git"
   },
   "private": true,
   "dependencies": {
@@ -31,6 +31,7 @@
     "react-split-pane": "^0.1.91",
     "request": "^2.88.2",
     "request-promise-native": "^1.0.8",
+    "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^0.88.2",
     "socket.io": "^2.3.0",
     "squirrel": "^1.0.0",
@@ -42,8 +43,10 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "electron-publish": "npm version patch --no-git-tag-version;yarn build;GH_TOKEN=$GH_TOKEN electron-builder -p always;GH_TOKEN=$GH_TOKEN electron-builder -p always --win --ia32",
-    "electron-major": "yarn build;GH_TOKEN=$GH_TOKEN electron-builder -p always;GH_TOKEN=$GH_TOKEN electron-builder -p always --win --ia32",
+    "electron-publish": "yarn build;GH_TOKEN=$GH_TOKEN electron-builder -p always;GH_TOKEN=$GH_TOKEN electron-builder -p always --win --ia32",
+    "electron-major": "npm version major --no-git-tag-version;yarn electron-publish",
+    "electron-minor": "npm version minor --no-git-tag-version;yarn electron-publish",
+    "electron-patch": "npm version patch --no-git-tag-version;yarn electron-publish",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "electron-start": "electron .",
@@ -72,8 +75,8 @@
     ]
   },
   "build": {
-    "appId": "com.kuuwange.bitbot",
-    "artifactName": "bitBot.${ext}",
+    "appId": "com.kuuwange.hithebot",
+    "artifactName": "hithebot.${ext}",
     "publish": [
       {
         "provider": "github",

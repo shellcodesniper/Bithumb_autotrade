@@ -11,7 +11,8 @@ import {
   Divider,
   Header,
   Icon,
-  Table
+  Table,
+  Responsive
 } from "semantic-ui-react";
 
 import ApiUtil from "utils/api"
@@ -128,49 +129,69 @@ class HotCoinBox extends React.Component {
     }
   }
   render() {
-    return (      
-    <div>
-      <div className="seperator" />
-      <Statistic.Group widths='four'>
-        <Statistic>
-          <Statistic.Value text>
-            {this.state.name}
-          </Statistic.Value>
-          <Statistic.Label>Coin Name</Statistic.Label>
-        </Statistic>
-        <Statistic>
-          <Statistic.Value>{this.state.curPrice}</Statistic.Value>
-          <Statistic.Label>현재가격</Statistic.Label>
-        </Statistic>
+    return (
+      <div>
+        <div className="seperator" />
+        <Statistic.Group widths="four">
+          <Statistic>
+            <Statistic.Value text>{this.state.name}</Statistic.Value>
+            <Statistic.Label>Coin Name</Statistic.Label>
+          </Statistic>
+          <Statistic size="mini">
+            <Statistic.Value>
+              <p className="tooLarge">{ApiUtil.comma3Seperator(this.state.curPrice)}</p>
+            </Statistic.Value>
+            <Statistic.Label>현재가격</Statistic.Label>
+          </Statistic>
 
-        <Statistic>
-          <Statistic.Value>
-            < Icon color = {
-              this.state.realtimeDiff > 0 ? "blue" : this.state.realtimeDiff === 0 ? "green" : "red"
-            }
-            name = {
-              this.state.realtimeDiff > 0 ? "hand point up outline" : this.state.realtimeDiff === 0 ? "hand point right outline" : "hand point down outline"
-            }
-            />{ApiUtil.comma3Seperator(this.state.realtimeDiff)}
-          </Statistic.Value>
-          <Statistic.Label>실시간등락</Statistic.Label>
-        </Statistic>
+          <Statistic>
+            <Statistic.Value>
+              <Icon
+                color={
+                  this.state.realtimeDiff > 0
+                    ? "blue"
+                    : this.state.realtimeDiff === 0
+                    ? "green"
+                    : "red"
+                }
+                name={
+                  this.state.realtimeDiff > 0
+                    ? "hand point up outline"
+                    : this.state.realtimeDiff === 0
+                    ? "hand point right outline"
+                    : "hand point down outline"
+                }
+              />
+              {ApiUtil.comma3Seperator(this.state.realtimeDiff)}
+            </Statistic.Value>
+            <Statistic.Label>실시간등락</Statistic.Label>
+          </Statistic>
 
-        <Statistic>
-          <Statistic.Value>
-            < Icon color = {
-              this.state.diffRate24 > 0 ? "blue" : this.state.diffRate24 === 0 ? "green" : "red"
-            }
-            name = {
-              this.state.diffRate24 > 0 ? "hand point up outline" : this.state.diffRate24 === 0 ? "hand point right outline" : "hand point down outline"
-            }
-            />{ApiUtil.comma3Seperator(this.state.diffRate24,0)} %
-          </Statistic.Value>
-          <Statistic.Label>24시간 등락</Statistic.Label>
-        </Statistic>
-      </Statistic.Group>
-    </div>
-  )
+          <Statistic>
+            <Statistic.Value>
+              <Icon
+                color={
+                  this.state.diffRate24 > 0
+                    ? "blue"
+                    : this.state.diffRate24 === 0
+                    ? "green"
+                    : "red"
+                }
+                name={
+                  this.state.diffRate24 > 0
+                    ? "hand point up outline"
+                    : this.state.diffRate24 === 0
+                    ? "hand point right outline"
+                    : "hand point down outline"
+                }
+              />
+              {ApiUtil.comma3Seperator(this.state.diffRate24, 0)} %
+            </Statistic.Value>
+            <Statistic.Label>24시간 등락</Statistic.Label>
+          </Statistic>
+        </Statistic.Group>
+      </div>
+    );
   }
   
 

@@ -4,6 +4,7 @@ import { HashRouter as Router, Route } from "react-router-dom";
 import Home from "components/home/home";
 import Login from "components/user/login";
 import Info from "components/user/info";
+import Updater from "components/updater/updater.js";
 // App.js에 있던 Aladin, LionKing, SpiderMan을
 // Components/Routes.js 로 이동
 export default () => (
@@ -11,5 +12,6 @@ export default () => (
     <Route exact path="/" component={Home} />
     <Route path="/login" component={Login} />
     <Route path="/info" component={Info} />
+    <Route path="/update" component={Updater} />
   </Router>
 );

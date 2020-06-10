@@ -5,3 +5,7 @@
 .seperator {
   height: 3rem;
 }
+
+.tooLarge {
+  font-size: 3rem !important;
+}
